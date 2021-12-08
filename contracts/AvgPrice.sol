@@ -81,9 +81,8 @@ contract AvgPrice_Org is Ownable {
         avgPrice += _priceList[fromMonth - 1][fromDay - 1].price;
         uint daysCount = getDayCounts(fromMonth, fromDay, toMonth, toDay);
 
-        console.log("Average Price : %d - %d", avgPrice, daysCount);
+        console.log("Average Price : %d / %d", avgPrice, daysCount);
         avgPrice = avgPrice / daysCount;
-        console.log("Average Price : %d", avgPrice);
 
         return avgPrice;
     }

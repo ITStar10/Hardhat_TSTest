@@ -26,7 +26,7 @@ contract AvgPrice is OwnableUpgradeable {
     // Initializer
     function initialize(address _dateUtilAddress) public initializer {
         __Ownable_init();
-        console.log("Set up DateUtil Address as : ", _dateUtilAddress);
+        console.log("Initialize DateUtil Address to : ", _dateUtilAddress);
         dateUtil = DateTime(_dateUtilAddress);
     }
 
@@ -73,9 +73,8 @@ contract AvgPrice is OwnableUpgradeable {
         avgPrice += _priceList[fromMonth - 1][fromDay - 1].price;
         uint daysCount = getDayCounts(fromMonth, fromDay, toMonth, toDay);
 
-        console.log("Average Price : %d - %d", avgPrice, daysCount);
+        console.log("Average Price : %d / %d", avgPrice, daysCount);
         avgPrice = avgPrice / daysCount;
-        console.log("Average Price : %d", avgPrice);
 
         return avgPrice;
     }
@@ -85,14 +84,12 @@ contract AvgPrice is OwnableUpgradeable {
     // @month : 1 - 12
     // @day : 1 - 31
     function getPrevDayTotal(uint8 month, uint8 day) private view returns (uint) {
-        // console.log("Get PrevDay Total of %d/%d", month, day);
         if (month == 1 && day == 1)
             return 0;
 
         if (day == 1) {
             uint16 currentYear = dateUtil.getYear(block.timestamp);
             uint8 lastMonthDays = dateUtil.getDaysInMonth(month - 1, currentYear);
-            console.log("Days of %d : %d", month - 1, lastMonthDays);
             return _priceList[month - 2][lastMonthDays - 1].total;
         }
         return _priceList[month - 1][day-2].total;
@@ -106,7 +103,6 @@ contract AvgPrice is OwnableUpgradeable {
         // uint16 currentYear = dateUtil.getYear(block.timestamp);
         uint16 totalDayCounts;
 
-        console.log("getDayCounts");
         if (fromMonth == toMonth) {
             totalDayCounts = toDay - fromDay + 1;
         } else {
@@ -121,7 +117,7 @@ contract AvgPrice is OwnableUpgradeable {
                 totalDayCounts += daysList[i-1];
             }
         }
-        console.log("Total count = ", totalDayCounts);
+        // console.log(" count = ", totalDayCounts);
         return totalDayCounts;
     }
 

@@ -42,34 +42,20 @@ describe("AvgPrice", function() {
     }
   })
 
-  beforeEach(async function(){    
-  });
-
-  // it('get day prices', async function() {
-  //   expect(await avgPrice.getDayPrice(1,1)).to.eq(1)
-  //   expect(await avgPrice.getDayPrice(2,3)).to.eq(3)
-  //   expect(await avgPrice.getDayPrice(3,31)).to.eq(31)
-  // })
-
   it('set day price on invalid dates', async () => {
-    // expect(avgPrice.setDayPrice(1,0,10)).to.eventually.be.rejectedWith(Error, 'Invalid Date')
-    expect(avgPrice.setDayPrice(1,0,10)).to.eventually.be.rejectedWith('Invalid Date')
-    expect(avgPrice.setDayPrice(2,29,10)).to.eventually.be.rejectedWith('Invalid Date')
-    
-    // it('should fail due to invalid date', () => {
-    //   expect(avgPrice.setDayPrice(1,0,10)).to.eventually.be.rejectedWith('Invalid Date')
-    //   // return expect(avgPrice.setDayPrice(1,0,10)).to.eventually.be.rejectedWith(Error, '')
-    // })
-
-    // it('should fail due to leap year', () => {
-    //   return expect(avgPrice.setDayPrice(2,29,10)).to.eventually.be.rejectedWith(Error, '')
-    // })
+    await expect(avgPrice.setDayPrice(1,0,10)).to.eventually.be.rejectedWith('Invalid Date')
+    await expect(avgPrice.setDayPrice(2,29,10)).to.eventually.be.rejectedWith('Invalid Date')
   })
 
   it('get day prices', async function() {
     expect(await avgPrice.getDayPrice(1,1)).to.eq(1)
     expect(await avgPrice.getDayPrice(2,3)).to.eq(3)
     expect(await avgPrice.getDayPrice(3,31)).to.eq(31)
+  })
+
+  it('get average price between days', async function () {
+    expect(await avgPrice.getAveragePrice(1, 10, 1, 20)).to.eq(15)
+    expect(await avgPrice.getAveragePrice(1, 25, 2, 5)).to.eq(17)
   })
 })
 
@@ -120,14 +106,13 @@ describe("Version 3.0 Test", function() {
     it('Setting price on another day is not allowed', async function () {
         let date = new Date()
 
-        const curMonth = date.getUTCMonth()
+        const curMonth = date.getUTCMonth() + 1
         const curDate = date.getUTCDate()
-        console.log("Current Day is %d/%d", curMonth, curDate)
 
         await avgPriceV3.setDayPrice(curMonth,curDate,20);
         expect(await avgPriceV3.getDayPrice(curMonth,curDate)).to.eq(20)
 
         // await expect(avgPriceV2.connect(signers[1]).setDayPrice(1,6,20)).to.be.revertedWith('Ownable: caller is not the owner')
-        // expect(await avgPriceV3.setDayPrice((curMonth + 1) % 12 + 1, 1, 100)).to.be.revertedWith('Not able to set price on another day.');
+        await expect(avgPriceV3.setDayPrice((curMonth + 1) % 12 + 1, 1, 100)).to.be.revertedWith('Not able to set price on another day.');
     })
 })

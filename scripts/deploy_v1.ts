@@ -6,11 +6,11 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-//   const DateTime = await ethers.getContractFactory('DateTime');
-//   console.log('Deploying DateTime');
-//   const dateTime = await DateTime.deploy();
-//   await dateTime.deployed();
-//   console.log('DateTime deployed to:', dateTime.address);
+  const DateTime = await ethers.getContractFactory('DateTime');
+  console.log('Deploying DateTime');
+  const dateTime = await DateTime.deploy();
+  await dateTime.deployed();
+  console.log('DateTime deployed to:', dateTime.address);
   // HardHat : 0x5FbDB2315678afecb367f032d93F642f64180aa3
   // Ganache : 0x01dA278412c40e7D984F48cF3e998a69E044F88a
   

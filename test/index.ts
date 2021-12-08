@@ -9,9 +9,9 @@ import { AvgPrice, DateTime } from "../typechain";
 chai.use(solidity)
 chai.use(chaiAsPromised)
 
-describe("AvgPrice", function() {
-  const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+describe("AvgPrice", function() {
   // let dateTime: DateTime
   // let avgPrice : AvgPrice
   let dateTime : DateTime;
@@ -26,7 +26,7 @@ describe("AvgPrice", function() {
     await dateTime.deployed()
 
     const avgPriceFactory = await ethers.getContractFactory('AvgPrice', signers[0])
-    avgPrice = await avgPriceFactory.deploy(dateTime.address)
+    avgPrice = await avgPriceFactory.deploy()
     // avgPrice = await upgrades.deployProxy(avgPriceFactory, [dateTime.address])
     await avgPrice.deployed()
 
