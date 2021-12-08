@@ -9,6 +9,7 @@ import "solidity-coverage";
 
 // newly added
 import "@openzeppelin/hardhat-upgrades";
+import "@nomiclabs/hardhat-ethers"
 
 const { privateKey, mnemonic } = require('./secret.json')
 
@@ -47,6 +48,8 @@ const config: HardhatUserConfig = {
     //   accounts:
     //     process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     // },
+
+    // #Real
     localhost: {
       url: "http://127.0.0.1:7545",
       accounts: 

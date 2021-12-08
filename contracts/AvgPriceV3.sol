@@ -4,18 +4,13 @@ pragma solidity ^0.8.0;
 // import "https://github.com/pipermerriam/ethereum-datetime/blob/master/contracts/DateTime.sol";
 import "./DateTime.sol";
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 // import "@openzeppelin/contracts/security/ReentrancyGuards.sol";
 
-// contract DateTime {
-//     function isLeapYear(uint16 year) public pure returns (bool){}
 
-//     function getYear(uint timestamp) public pure returns (uint16){}
 
-//     function getDaysInMonth(uint8 month, uint16 year) public pure returns (uint8){}
-// }
-
-contract AvgPrice_Org is Ownable {
+contract AvgPriceV3 is OwnableUpgradeable {
 
     // Struct for everyday Information
     struct DayInfo {
@@ -27,23 +22,30 @@ contract AvgPrice_Org is Ownable {
     DayInfo[31][12] private _priceList;
 
     DateTime dateUtil;
-    // constructor () {
-    //     dateUtil = DateTime(0xd9145CCE52D386f254917e481eB44e9943F39138);
-    // }
-    constructor (address _dateUtilAddress) {
-        dateUtil = DateTime(_dateUtilAddress);
+    
+    // Initializer
+    function initialize() public initializer {
+        __Ownable_init();
     }
-
-    // function setDateUtilAddress(address _dateUtilAddress) external onlyOwner {
-    //     dateUtil = DateTime(_dateUtilAddress);
-    // }
 
     // Check correct day Range
     // @month : 1 - 12
     // @day : 1 - 31
     modifier correctDayRange(uint8 month, uint8 day){
+        console.log("correctDayRange %d-%d", month, day);
         uint16 currentYear = dateUtil.getYear(block.timestamp);
         require(month > 0 && month <= 12 && day > 0 && day <= (dateUtil.getDaysInMonth(month, currentYear)), "Invalid Date");
+        _;
+    }
+
+    // Check today
+    // @month : 1 - 12
+    // @day : 1 - 31
+    modifier onlyToday(uint8 month, uint8 day) {
+        uint currentTime = block.timestamp;
+        uint8 currentMonth = dateUtil.getMonth(currentTime);
+        uint8 currentDay = dateUtil.getDay(currentTime);
+        require(currentMonth == month && currentDay == day, 'Not able to set price on another day.');
         _;
     }
 
@@ -51,7 +53,7 @@ contract AvgPrice_Org is Ownable {
     // Store a day price in the contract
     // @month : 1 - 12
     // @day : 1 - 31
-    function setDayPrice(uint8 month, uint8 day, uint price) external correctDayRange(month, day) {
+    function setDayPrice(uint8 month, uint8 day, uint price) external correctDayRange(month, day) onlyOwner onlyToday(month, day) {
         _priceList[month - 1][day - 1].price = price;
         _priceList[month - 1][day - 1].total = getPrevDayTotal(month, day) + price;
     }
